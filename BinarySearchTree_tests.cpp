@@ -87,17 +87,16 @@ b.insert(2);
     ASSERT_TRUE(b.height() == 2);
 }
 
-// TEST(height8nodes) {// insert/sorting problem
-// BinarySearchTree<int> b;
-// b.insert(4);
-// b.insert(3);
-// b.insert(5);
-// b.insert(2);
-// b.insert(6);
-// b.insert(7);
-// b.insert(4);
-//     ASSERT_TRUE(b.height() == 3);
-// }
+TEST(height8nodes) {// insert/sorting problem
+BinarySearchTree<int> b;
+b.insert(4);
+b.insert(3);
+b.insert(5);
+b.insert(2);
+b.insert(6);
+b.insert(7);
+ASSERT_EQUAL(b.height(), 4);
+}
 // copy_nodes_impl:
 
 // Test copying an empty tree (should return nullptr).
@@ -221,21 +220,27 @@ BinarySearchTree<int> b;
 ASSERT_TRUE(b.check_sorting_invariant());
 }
 // Test on a correctly sorted tree (should return true).
-// TEST(sortcorrect) {
-// BinarySearchTree<int> b;
-// for (int i = 0; i < 25; i++){
-//     b.insert(i);
-// }
-// ASSERT_TRUE(b.check_sorting_invariant());
-// }
+TEST(sortcorrect) {
+BinarySearchTree<int> b;
+for (int i = 0; i < 25; i++){
+    b.insert(i);
+}
+ASSERT_TRUE(b.check_sorting_invariant());
+}
+
+TEST(sortincorrect) {
+BinarySearchTree<int> b;
+b.insert(1);
+b.insert(0);
+
+*b.begin() = 2;
+ASSERT_FALSE(b.check_sorting_invariant());
+}
 // Test on a tree that violates the binary search tree properties (should return false).
 // traverse_inorder_impl and traverse_preorder_impl:
 
-// // Test traversal on an empty tree (should not print anything).
-// TEST(traverseempty) {
-// BinarySearchTree<int> b;
-// std::string correct = b.trave();
-// }
+// Test traversal on an empty tree (should not print anything).
+
 // // Test on non-empty trees and verify the output order is correct for in-order and pre-order traversals, respectively.
 // // min_greater_than_impl:
 

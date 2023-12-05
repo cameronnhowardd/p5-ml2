@@ -155,25 +155,70 @@ typename Map<K, V, C>::Iterator Map<K, V, C>::find(const K& k) const {
   return b.find(pair);
 }
 
-
+ // MODIFIES: this
+  // EFFECTS : Returns a reference to the mapped value for the given
+  //           key. If k matches the key of an element in the
+  //           container, the function returns a reference to its
+  //           mapped value. If k does not match the key of any
+  //           element in the container, the function inserts a new
+  //           element with that key and a value-initialized mapped
+  //           value and returns a reference to the mapped value.
+  //           Note: value-initialization for numeric types guarantees the
+  //           value will be 0 (rather than memory junk).
+  //
+  // HINT:     In the case the key was not found, and you must insert a
+  //           new element, use the expression {k, Value_type()} to create
+  //           that element. This ensures the proper value-initialization is done.
+  //
+  // HINT: http://www.cplusplus.com/reference/map/map/operator[]/
 template <typename K, typename V, typename C>
 V& Map<K, V, C>::operator[](const K& k) {
-  assert(false);
-}
+  
+  Iterator finding = find(k);
+  if (finding != end()) {
+    return finding->second;
+  }
+  else {
+    Pair_type new_pair (k, V());
+    b.insert(new_pair);
+    return b.find(new_pair)->second;
+  }
 
+}
+// MODIFIES: this
+  // EFFECTS : Inserts the given element into this Map if the given key
+  //           is not already contained in the Map. If the key is
+  //           already in the Map, returns an iterator to the
+  //           corresponding existing element, along with the value
+  //           false. Otherwise, inserts the given element and returns
+  //           an iterator to the newly inserted element, along with
+  //           the value true.
 template <typename K, typename V, typename C>
 std::pair<typename Map<K, V, C>::Iterator, bool> Map<K, V, C>::insert(const Pair_type &val) {
-  assert(false);
+  Iterator found = find(val.first);
+  if(found != end()){
+    return std::make_pair(found, false);
+   }
+   
+  else {
+    b.insert(val);
+    Iterator foundnew = find(val.first);
+    return std::make_pair(foundnew, true);
+  }
 }
 
+// EFFECTS : Returns an iterator to the first key-value pair in this Map.
 template <typename K, typename V, typename C>
 typename Map<K, V, C>::Iterator Map<K, V, C>::begin() const {
-  assert(false);
+Iterator first = b.begin();
+return first;
 }
 
+// EFFECTS : Returns an iterator to "past-the-end".
 template <typename K, typename V, typename C>
 typename Map<K, V, C>::Iterator Map<K, V, C>::end() const {
-  assert(false);
+Iterator last = b.end();
+return last;
 }
 
 
