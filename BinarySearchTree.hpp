@@ -408,12 +408,12 @@ private:
     return node;
     }
     else if (less(query, node->datum)){
-      find_impl(node->left, query, less);
+      return find_impl(node->left, query, less);
     }
     else {
-      find_impl(node->right, query, less);
+      return find_impl(node->right, query, less);
     }
-    return node;
+    return nullptr;
   }
 
   // REQUIRES: item is not already contained in the tree rooted at 'node'
@@ -431,14 +431,33 @@ private:
   //       associated with this instantiation of the BinarySearchTree
   //       template, NOT according to the < operator. Use the "less"
   //       parameter to compare elements.
-  static Node * insert_impl(Node *node, const T &item, Compare less) {
-  if(node == nullptr){
+  static Node * insert_impl(Node *node, const T &item, Compare less) { // need to make sure insserting in order
+  if (node == nullptr){
+    std::cout << "node is nullptr" << item << std::endl;
       Node *newNode = new Node;
       newNode->datum = item;
       newNode->left = nullptr;
       newNode->right = nullptr;
       return newNode;
-    }
+  }
+  if ((less(item, node->datum)) && (node->left == nullptr)) {
+    std::cout << "left is nullptr" << item << std::endl;
+      Node *newNode = new Node;
+      newNode->datum = item;
+      newNode->left = nullptr;
+      newNode->right = nullptr;
+      node->left = newNode;
+      return node;
+  }
+  else if ((less(node->datum, item)) && (node->right == nullptr)) {
+    std::cout << "right is nullptr" << item << std::endl;
+      Node *newNode = new Node;
+      newNode->datum = item;
+      newNode->left = nullptr;
+      newNode->right = nullptr;
+      node->right = newNode;
+      return node;
+  }
   else if(less(item, node->datum)){
       insert_impl(node->left, item, less);
   }
@@ -489,14 +508,15 @@ private:
     if(node == nullptr){
       return true;
     }
-    else if ((node->left != nullptr) && (!less(node->left->datum, node->datum))){
+    else if ((node->left != nullptr) && less(node->left->datum, node->datum)){
       return false;
     }
-    else if ((node->right != nullptr) && (!less(node->right->datum, node->datum))){
+    else if ((node->right != nullptr) && less(node->datum, node->right->datum)){
       return false;
     }
-    return check_sorting_invariant_impl(node->right, less) && check_sorting_invariant_impl(node->left, less);
-  }
+    return check_sorting_invariant_impl(node->left, less) && check_sorting_invariant_impl(node->right, less);
+}
+
 
   // EFFECTS : Traverses the tree rooted at 'node' using an in-order traversal,
   //           printing each element to os in turn. Each element is followed

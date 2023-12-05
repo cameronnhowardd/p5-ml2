@@ -31,7 +31,13 @@ private:
   using Pair_type = std::pair<Key_type, Value_type>;
 
   // A custom comparator
-  class PairComp {
+  class PairComp { //chat gpt code so need to change this
+  
+    public:
+    bool operator()(const Pair_type& lhs, const Pair_type& rhs) const {
+            Key_compare comp; 
+            return comp(lhs.first, rhs.first); 
+        }
   };
 
 public:
@@ -111,7 +117,9 @@ public:
   Iterator end() const;
 
 private:
-  // Add a BinarySearchTree private member HERE.
+  BinarySearchTree<Pair_type, PairComp> b;
+
+  
 };
 
 // You may implement member functions below using an "out-of-line" definition
@@ -124,5 +132,49 @@ private:
 //    typename Map<K, V, C>::Iterator Map<K, V, C>::begin() const {
 //      // YOUR IMPLEMENTATION GOES HERE
 //    }
+template <typename K, typename V, typename C>
+bool Map<K, V, C>::empty() const {
+  return b.empty();
+}
+
+template <typename K, typename V, typename C>
+size_t Map<K, V, C>::size() const {
+  return b.size();
+}
+
+// EFFECTS : Searches this Map for an element with a key equivalent
+  //           to k and returns an Iterator to the associated value if found,
+  //           otherwise returns an end Iterator.
+  //
+  // HINT: Since Map is implemented using a BinarySearchTree that stores
+  //       (key, value) pairs, you'll need to construct a dummy value
+  //       using "Value_type()".
+template <typename K, typename V, typename C>
+typename Map<K, V, C>::Iterator Map<K, V, C>::find(const K& k) const {
+  Pair_type pair (k, V());
+  return b.find(pair);
+}
+
+
+template <typename K, typename V, typename C>
+V& Map<K, V, C>::operator[](const K& k) {
+  assert(false);
+}
+
+template <typename K, typename V, typename C>
+std::pair<typename Map<K, V, C>::Iterator, bool> Map<K, V, C>::insert(const Pair_type &val) {
+  assert(false);
+}
+
+template <typename K, typename V, typename C>
+typename Map<K, V, C>::Iterator Map<K, V, C>::begin() const {
+  assert(false);
+}
+
+template <typename K, typename V, typename C>
+typename Map<K, V, C>::Iterator Map<K, V, C>::end() const {
+  assert(false);
+}
+
 
 #endif // DO NOT REMOVE!!!
