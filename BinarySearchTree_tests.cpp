@@ -195,6 +195,14 @@ b.insert(26);
 ASSERT_TRUE(b.size() == 26);
 }
 // Test inserting a duplicate item (should be prohibited as per your requirement).
+// TEST(insertduplicate) {
+// BinarySearchTree<int> b;
+// for (int i = 0; i < 25; i++){
+//     b.insert(i);
+// }
+// b.insert(21);
+// ASSERT_TRUE(b.size() == 25);
+// }
 // Test the structure of the tree after insertions to ensure the binary search tree property is maintained.
 // min_element_impl and max_element_impl:
 
@@ -237,6 +245,7 @@ b.insert(0);
 ASSERT_FALSE(b.check_sorting_invariant());
 }
 // Test on a tree that violates the binary search tree properties (should return false).
+
 // traverse_inorder_impl and traverse_preorder_impl:
 
 // Test traversal on an empty tree (should not print anything).

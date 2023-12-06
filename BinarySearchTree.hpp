@@ -438,6 +438,11 @@ private:
       newNode->right = nullptr;
       return newNode;
   }
+
+  else if (!less(item, node->datum) && !less(node->datum, item)) {
+    return node;
+  } 
+
   else if (less(item, node->datum)) {
       if(node->left == nullptr){
       Node *newNode = new Node;
