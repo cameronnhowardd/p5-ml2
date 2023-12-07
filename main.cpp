@@ -1,15 +1,15 @@
-#include <cassert>  //assert
+#include <cassert>
 #include <cstddef>
-#include <iostream> //ostream
-#include <functional> //less
+#include <iostream>
+#include <functional>
 #include <utility>
 #include <map>
 #include <set>
+#include <string>
+#include <cmath>
 #include "csvstream.hpp"
-// 1) read csv 
-// 2) read each sentence in the csv 2a. break that sentence  down into unique words 
-// 2b. Each set of those words is assigned a label (should be in the csv entry for that sentence)
-// function main(arguments):
+
+
 std::set<std::string> unique_words(const std::string &str) {
   std::istringstream source(str);
   std::set<std::string> words;
@@ -19,7 +19,103 @@ std::set<std::string> unique_words(const std::string &str) {
   }
   return words;
 }
+
+class Classifier {
+
+private:
+struct DataSet {
+int totalPosts;
+int totalUniqueWords;
+std::set<std::string> UniqueWords;
+std::map<std::string, int> numForEachWord;
+std::map<std::string, int> numForEachLabel;
+std::map<std::string, std::map<std::string, int> > numPairWordLabel;
+};
+
+
+
+public:
+
+Classifier();
+~Classifier();
+
+DataSet training(std::string filename) {
+    csvstream csv_file(filename);
+    std::map<std::string, std::string> row;
+    DataSet dataset;
+    dataset.totalPosts = 0; 
+    while(csv_file >> row){
+        dataset.totalPosts++;
+        std::string labelOfPost = row["C"];
+        dataset.numForEachLabel[labelOfPost]++;
+        std::set<std::string> setOfUniqueWords = unique_words(row["w"]);
+        for (const std::string &uniqueWord : setOfUniqueWords) {
+             dataset.totalUniqueWords.insert(uniqueWord);
+             dataset.numPairWordLabel[labelOfPost][uniqueWord]++;
+        }
+    }
+    return dataset;
+}
+double probability(std::string filename, const std::string &word, const std::string &label) {
+csvstream csv_file(filename);
+std::string C;
+DataSet dataset;
+DataSet datum = training(filename);
+double logProb = 0.0;
+int labels = dataset.numForEachLabel[C];
+for (const auto &word : words){
+if(dataset.numForEachLabel.find(word) != dataset.numForEachLabel.end()){
+    double logPrior = std::log(static_cast<double>(labels)/dataset.totalPosts);
+    logProb += logPrior;
+}
+else if (dataset.numPairWordLabel[C].find(word) != dataset.numPairWordLabel[C].end()){
+    double logPrior = std::log(static_cast<double>(dataset.numPairWordLabel[C][word])/dataset.numForEachLabel[C]);
+    logProb += logPrior;
+}
+else if (//Use when does not occur in posts labeled but does occur in the training data overall.)
+{
+    double logPrior = std::log(static_cast<double>(dataset.numForEachWord[word])/dataset.totalPosts);
+    logProb += logPrior;
+}
+else {
+    double logPrior = std::log(static_cast<double>(1)/dataset.totalPosts);
+    logProb += logPrior;
+}
+}
+return logProb;
+}
+
+
+std::pair<std::vector<std::set<std::string> >, std::vector<std::string> > highestprobability(std::set<std::string> uniques) const{
+    std::string best;
+    double highestScore = -std::numeric_limits<double>::infinity();
+    for (const auto &word : words) {
+    double score = probability(filename);
+    if (score > highestScore){
+        highestScore = score;
+        best = score.label;
+    }
+    return best;
+  }
+}
+std::string prediction(std::string filename){
+    csvstream predictionStream(filename);
+    std::map<std::string, std::string> piazza;
+
+    while (predictionStream >> piazza){
+        DataSet data;
+        data.UniqueWords = unique_words(piazza["post"]);
+        std::string theLabel = highestprobability(data.UniqueWords);
+}
+return theLabel;
+}
+
+};
+
+
+
 int main(int argc, char *argv[]){
+std::cout.precision(3);
     if ((argc != 3) && (argc != 4)) {
         std::cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << std::endl;
         return 1;
@@ -28,108 +124,13 @@ int main(int argc, char *argv[]){
         std::cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << std::endl;
         return 1;
   }
-  std::string exname = argv[0];
-  std::string file1 = argv[1];
-  std::string file2 = argv[2];
-  //std::string debug = argv[3];
 
-  
+  bool debug = (argc == 4) && (std::string(argv[3]) == "--debug");
 
-
-
-//     trainingFile, testFile, debugMode = parseArguments(arguments)
-
-//     // Initialize your classifier
-//     classifier = new Classifier()
-class Classifier {
-
-Classifier(){
-}
-
-~Classifier(){
-}
-std::pair<std::vector<std::set<std::string> >, std::vector<std::string> > myFunction(std::string filename) {
-    std::ifstream file(filename); // Open the CSV file
-    if (!file.is_open()) {
-        std::cerr << "Error opening file:" << filename << std::endl;
-    }
-
-//   std::string filename2 = "argv[2]";
-//   std::ifstream fin2;
-//   fin.open(file2);
-//   if (!fin.is_open()) {
-//     std::cout << "Error opening file: " << filename << std::endl;
-//     return 1;
-//   }
-
-    std::string line;
-    std::getline(file, line);
-    std::vector<std::string> *strings = new std::vector<std::string>;
-    std::vector<std::set<std::string> > *sets = new std::vector<std::set<std::string> >;
-    while (std::getline(file, line)) {
-        std::istringstream ss(line);
-        std::string *token = new std::string;
-        std::string *tag = new std:: string;  // String to store the third entry
-        // Iterate to get the third entry
-        for (int i = 0; i < 3 && std::getline(ss, *token, ','); ++i) {
-            if (i == 2) {
-                *tag = *token;
-                break;  // Exit the loop after the third entry
-            }
-        }
-
-    std::cout << tag << std::endl;
-    std::string cell;
-    //std::cout << line << std::endl;
-    std::getline(ss, *token, ',');
-    std::set<std::string> x = unique_words(*token);
-    // Print all elements in the set
-    for (const auto& element : x) {
-        std::cout << element << " ";
-    }
-    std::cout << std::endl;
-    sets.push_back(x);
-
-    strings -> push_back(token);
-    }
-}
-void initializeData(std::istream& in) {
-
-}
-void debuggerData(std::istream& in) {
-
-}
-void predictionsData(std::istream& in){
+Classifier classifier;
+classifier.training(argv[1]);
+if (debug){
 
 }
 
-void evaluatePredicationsData(std::istream& in){
-
-}
-
-void performanceData(std::istream& in){
-
-}
-};
-//     // Load and train the classifier
-//     trainingData = readDataFromFile(trainingFile)
-//     classifier.train(trainingData)
-
-//     // If debug mode is active, print additional debug information
-//     if debugMode:
-//         classifier.printDebugInfo()
-
-//     // Perform predictions on the test data
-//     testData = readDataFromFile(testFile)
-//     predictions = classifier.predict(testData)
-
-//     // Evaluate and print the predictions
-//     printPredictions(predictions)
-
-//     // Optionally, print the performance of the classifier
-//     printPerformance(predictions, testData)
-
-//     return success
-
-// // Supporting functions (readDataFromFile, printDebugInfo, etc.)
 }
